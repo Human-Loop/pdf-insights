@@ -1,6 +1,7 @@
 export enum BackendDocumentType {
   TenK = "10-K",
   TenQ = "10-Q",
+  Lpa = "lpa",
 }
 
 export interface BackendDocument {
@@ -13,6 +14,7 @@ export interface BackendDocument {
 
 export interface BackendMetadataMap {
   sec_document: BackendSecDocument;
+  lpa_document: BackendLpaDocument;
 }
 
 export interface BackendSecDocument {
@@ -21,4 +23,11 @@ export interface BackendSecDocument {
   doc_type: BackendDocumentType;
   year: number;
   quarter: number;
+}
+
+export interface BackendLpaDocument {
+  fund_name: string;
+  doc_type: BackendDocumentType;
+  company_ticker: string;
+  year: number;
 }

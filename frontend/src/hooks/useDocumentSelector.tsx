@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { GroupBase } from "react-select";
 import Select from "react-select/dist/declarations/src/Select";
-import { SecDocument, DocumentType, Ticker } from "~/types/document";
+import { LpaDocument, DocumentType, Ticker } from "~/types/document";
 import type { SelectOption } from "~/types/selection";
 import {
   findDocumentById,
@@ -19,7 +19,7 @@ import { backendClient } from "~/api/backend";
 export const MAX_NUMBER_OF_SELECTED_DOCUMENTS = 10;
 
 export const useDocumentSelector = () => {
-  const [availableDocuments, setAvailableDocuments] = useState<SecDocument[]>(
+  const [availableDocuments, setAvailableDocuments] = useState<LpaDocument[]>(
     []
   );
   const [availableTickers, setAvailableTickers] = useState<Ticker[]>([]);
@@ -43,7 +43,7 @@ export const useDocumentSelector = () => {
   }, []);
 
   const [selectedDocuments, setSelectedDocuments] = useLocalStorage<
-    SecDocument[]
+    LpaDocument[]
   >("selectedDocuments", []);
   const sortedSelectedDocuments = sortDocuments(selectedDocuments);
 
@@ -119,6 +119,7 @@ export const useDocumentSelector = () => {
   const isStartConversationButtonEnabled = selectedDocuments.length > 0;
 
   const selectTicker = (ticker: Ticker) => {
+    console.log("setting selected ticker", ticker)
     setSelectedTicker(ticker);
     setFocusDocumentType(true);
   };

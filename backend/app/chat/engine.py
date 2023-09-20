@@ -164,15 +164,21 @@ async def build_doc_id_to_index_map(
         )
         doc_id_to_index = {}
         for doc in documents:
+            print(f"Fetching and reading document {doc.id}")
             llama_index_docs = fetch_and_read_document(doc)
+            print(f"fetched and read document Adding document {doc.id} to storage context")
             storage_context.docstore.add_documents(llama_index_docs)
+            print(f"Added document {doc.id} to storage context")
             index = VectorStoreIndex.from_documents(
                 llama_index_docs,
                 storage_context=storage_context,
                 service_context=service_context,
             )
+            print(f"Created index for document {doc.id}")
             index.set_index_id(str(doc.id))
+            print(f"Set index id for document {doc.id}")
             index.storage_context.persist(persist_dir=persist_dir, fs=fs)
+            print(f"Persisted index for document {doc.id}")
             doc_id_to_index[str(doc.id)] = index
     return doc_id_to_index
 

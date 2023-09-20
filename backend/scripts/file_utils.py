@@ -25,6 +25,12 @@ def filing_exists(cik: str, filing_type: str, output_dir: str) -> bool:
     filing_dir = data_dir / cik / filing_type
     return filing_dir.exists()
 
+def lpa_exists(lpa: str, file_type: str, output_dir: str) -> bool:
+    """Checks if a lpa exists for a given filename and file type."""
+    data_dir = Path(output_dir) / "sec-edgar-filings"
+    filing_dir = data_dir / lpa / file_type
+    return filing_dir.exists()
+
 
 def parse_quarter_from_full_submission_txt(full_submission_txt_file_path: Path) -> int:
     """
@@ -155,6 +161,11 @@ def get_available_filings(output_dir: str) -> List[Filing]:
                     )
                     filings.append(filing)
     return filings
+
+def get_available_files(output_dir: str) -> List[str]:
+    data_dir = Path(output_dir)
+    files = [file for file in data_dir.iterdir()]
+    return files
 
 
 def get_available_filings_as_df(output_dir: str) -> pd.DataFrame:

@@ -125,6 +125,7 @@ class DocumentMetadataKeysEnum(str, Enum):
     """
 
     SEC_DOCUMENT = "sec_document"
+    LPA_DOCUMENT = "lpa_document"
 
 
 class SecDocumentTypeEnum(str, Enum):

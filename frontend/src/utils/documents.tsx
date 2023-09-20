@@ -1,11 +1,12 @@
-import type { SecDocument, Ticker, DocumentType } from "~/types/document";
+import type { LpaDocument, Ticker, DocumentType } from "~/types/document";
 import { SelectOption } from "~/types/selection";
 
-export function getAllTickers(documents: SecDocument[]): Ticker[] {
+export function getAllTickers(documents: LpaDocument[]): Ticker[] {
   const result: Ticker[] = [];
   const seen: { [key: string]: boolean } = {};
 
   for (const doc of documents) {
+    console.log(doc)
     // Skip if we've seen this ticker before
     if (seen[doc.ticker]) {
       continue;
@@ -24,8 +25,8 @@ export function getAllTickers(documents: SecDocument[]): Ticker[] {
 export function filterByTickerAndType(
   ticker: string,
   docType: DocumentType,
-  documents: SecDocument[]
-): SecDocument[] {
+  documents: LpaDocument[]
+): LpaDocument[] {
   if (!ticker) {
     return [];
   }
@@ -36,12 +37,12 @@ export function filterByTickerAndType(
 
 export function findDocumentById(
   id: string,
-  documents: SecDocument[]
-): SecDocument | null {
+  documents: LpaDocument[]
+): LpaDocument | null {
   return documents.find((val) => val.id === id) || null;
 }
 
-export function sortDocuments(selectedDocuments: SecDocument[]): SecDocument[] {
+export function sortDocuments(selectedDocuments: LpaDocument[]): LpaDocument[] {
   return selectedDocuments.sort((a, b) => {
     // Sort by fullName
     const nameComparison = a.fullName.localeCompare(b.fullName);

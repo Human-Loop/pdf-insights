@@ -1,31 +1,35 @@
 import { MAX_NUMBER_OF_SELECTED_DOCUMENTS } from "~/hooks/useDocumentSelector";
 import { BackendDocument, BackendDocumentType } from "~/types/backend/document";
-import { SecDocument, DocumentType } from "~/types/document";
+import { LpaDocument, DocumentType } from "~/types/document";
 import { documentColors } from "~/utils/colors";
 
 export const fromBackendDocumentToFrontend = (
   backendDocuments: BackendDocument[]
 ) => {
-  const frontendDocs: SecDocument[] = [];
-  backendDocuments.map((backendDoc, index) => {
-    const backendDocType = backendDoc.metadata_map.sec_document.doc_type;
+  const frontendDocs: LpaDocument[] = [];
+  console.log("empty frontend docs")
+  backendDocuments.filter((d) => "lpa_document" in d.metadata_map).map((backendDoc, index) => {
+    const backendDocType = backendDoc.metadata_map.lpa_document.doc_type;
+    console.log("backenddoc type")
     const frontendDocType =
-      backendDocType === BackendDocumentType.TenK
-        ? DocumentType.TenK
-        : DocumentType.TenQ;
+      backendDocType === BackendDocumentType.Lpa
+        ? DocumentType.Lpa
+        : DocumentType.Lpa;
+    console.log("frontenddoc type")
 
     // we have 10 colors for 10 documents
     const colorIndex = index < 10 ? index : 0;
+    console.log("colorindex")
     const payload = {
       id: backendDoc.id,
       url: backendDoc.url,
-      ticker: backendDoc.metadata_map.sec_document.company_ticker,
-      fullName: backendDoc.metadata_map.sec_document.company_name,
-      year: String(backendDoc.metadata_map.sec_document.year),
+      fullName: backendDoc.metadata_map.lpa_document.fund_name,
+      year: backendDoc.metadata_map.lpa_document.year.toString(),
       docType: frontendDocType,
+      ticker: backendDoc.metadata_map.lpa_document.company_ticker,
       color: documentColors[colorIndex],
-      quarter: backendDoc.metadata_map.sec_document.quarter || "",
-    } as SecDocument;
+    } as LpaDocument;
+    console.log("payload", payload)
     frontendDocs.push(payload);
   });
   return frontendDocs;

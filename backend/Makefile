@@ -15,7 +15,7 @@ run_docker:
 		echo "The .env file contains a DATABASE_URL parameter. Please remove it from the .env file and try again."; \
 		exit 1; \
 	fi
-	docker compose up
+	docker compose up --build --force-recreate
 
 migrate:
 	echo "Running migrations."
@@ -62,6 +62,10 @@ seed_db:
 	echo "Seeding database."
 	poetry run python scripts/seed_db.py
 
+seed_db_with_lpas:
+	echo "Seeding database with lpa files."
+	poetry run python scripts/seed_db_with_lpas.py
+
 seed_db_preview:
 	echo "Seeding database for Preview."
 	# only need to populate with two companies for Preview
@@ -71,4 +75,4 @@ seed_db_local:
 	echo "Seeding database for local."
 	docker compose start db
 	make setup_localstack
-	python scripts/seed_db.py --ciks '["0001018724", "1326801"]'  --filing_types '["10-K"]'
+	python scripts/seed_db.py --ciks '["0001018724"]'  --filing_types '["10-K"]'
