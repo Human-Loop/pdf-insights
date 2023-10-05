@@ -1,26 +1,32 @@
 run:
 	echo "Running in local mode."
-	docker compose start db
-	docker compose start localstack
+	docker compose create db localstack
+	docker compose start db localstack
 	poetry run start
 
 run_docker:
 	echo "Running in local mode with docker."
-	# Check if .env file would set the DATABASE_URL parameter and ask the user to remove it
-	# from .env if it would
-	# This is needed because the DATABASE_URL parameter is set in docker-compose.yml
-	# Also account for the case where DATABASE_URL exists but has been commented out by
-	# doing a regex match to see that its at the start of a line
-	if [ -f .env ] && grep -q -E '^\s*DATABASE_URL\s*=' .env; then \
-		echo "The .env file contains a DATABASE_URL parameter. Please remove it from the .env file and try again."; \
-		exit 1; \
-	fi
 	docker compose up
 
 migrate:
 	echo "Running migrations."
+	docker compose create db
 	docker compose start db
 	poetry run python -m alembic upgrade head
+	# workaround for having PGVector create its tables
+	poetry run python -m scripts.build_vector_tables
+
+refresh_db:
+	# First ask for confirmation.
+	@echo -n "Are you sure you want to refresh the local database? This will delete all data in your local db. [Y/n] "; \
+	read ans; \
+	if [ $${ans:-'N'} = 'Y' ]; then make confirmed_refresh_db; else echo "Aborting."; fi
+
+confirmed_refresh_db:
+	echo "Refreshing database."
+	docker compose down db
+	docker volume rm backend_postgres_data
+	make migrate
 
 test:
 	poetry run python -m pytest tests/
@@ -29,6 +35,7 @@ chat:
 	poetry run python -m scripts.chat_llama
 
 setup_localstack:
+	docker compose create localstack
 	docker compose start localstack
 	echo "Waiting for localstack to start..."
 	sleep 3
@@ -69,6 +76,7 @@ seed_db_preview:
 
 seed_db_local:
 	echo "Seeding database for local."
+	docker compose create db
 	docker compose start db
 	make setup_localstack
 	python scripts/seed_db.py --ciks '["0001018724", "1326801"]'  --filing_types '["10-K"]'
